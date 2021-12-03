@@ -64,15 +64,15 @@ async function getJSON(url) {
 }
 
 async function getDoubanInfo(id) {
-    // TODO: Remove this API completely if it doesn't come back.
-    const data = await getJSON_GM(`https://api.douban.com/v2/movie/imdb/${id}?apikey=0df993c66c0c636e29ecbb5344252a4a`);
-    if (data) {
-        if (isEmpty(data.alt))
-            return;
-        const url = data.alt.replace('/movie/', '/subject/') + '/';
-        return { url, rating: data.rating };
-    }
-    // Fallback to search.
+    // // TODO: Remove this API completely if it doesn't come back.
+    // const data = await getJSON_GM(`https://api.douban.com/v2/movie/imdb/${id}?apikey=0df993c66c0c636e29ecbb5344252a4a`);
+    // if (data) {
+    //     if (isEmpty(data.alt))
+    //         return;
+    //     const url = data.alt.replace('/movie/', '/subject/') + '/';
+    //     return { url, rating: data.rating };
+    // }
+    // // Fallback to search.
     const search = await getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${id}`);
     if (search && search.length > 0 && search[0].id) {
         const abstract = await getJSON_GM(`https://movie.douban.com/j/subject_abstract?subject_id=${search[0].id}`);
@@ -154,8 +154,11 @@ async function replaceBHDDoubanIntro(url){
         .filter(e => e.nodeType === 3)
         .map(e => e.textContent.trim())
         .join('\n');
-        let fix = description.replace(/^|\n/g, '\n　　') + '\n\n'
-        document.querySelector('#torrentBigBookmarkExtension').childNodes[0].nodeValue = fix
+        let fix = description.replace(/^|\n/g, '<br>\n　　') + '\n\n'
+        let nodes = description.split(/^|\n/g)
+        let intro = document.querySelector('#torrentBigBookmarkExtension')
+        intro.childNodes[0].nodeValue = ''
+        intro.insertAdjacentHTML('afterbegin', fix);
     }
 }
 
