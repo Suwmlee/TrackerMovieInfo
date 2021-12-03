@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieRatings
 // @namespace    https://www.suwmlee.com/
-// @version      0.1.0
+// @version      0.2.0
 // @description  Show Douban ratings on BHD
 // @description: zh-CN 在tracker站点显示豆瓣评分
 // @author       Suwmlee
@@ -155,7 +155,8 @@ async function replaceBHDDoubanIntro(url){
         .map(e => e.textContent.trim())
         .join('\n');
         let fix = description.replace(/^|\n/g, '<br>\n　　') + '\n\n'
-        // let nodes = description.split(/^|\n/g)
+        if(fix.indexOf("<br>") == 0)
+            fix = fix.substring(4);
         let intro = document.querySelector('#torrentBigBookmarkExtension')
         intro.childNodes[0].nodeValue = ''
         intro.insertAdjacentHTML('afterbegin', fix);
@@ -165,23 +166,22 @@ async function replaceBHDDoubanIntro(url){
 (async () => {
     let host = location.hostname;
     if (host === 'beyond-hd.me') {
+        console.log('Start BHD MovieInfo')
         const imdbSpan = $("span[title='IMDb Rating']");
         if (!imdbSpan) {
             return;
         }
-        console.log('test rating')
         const imdbLink = imdbSpan[0].children[0].href
-        console.log(imdbSpan)
         if (!imdbLink) {
             return;
         }
-
         const id = imdbLink.match(/tt\d+/);
         if (!id)
             return;
         const data = await getDoubanInfo(id);
         if (!data)
             return;
+        console.log('GetDoubanInfo')
         insertBHDDoubanRating(imdbSpan[0].parentElement, data.url, data.rating.average)
         replaceBHDDoubanName(data.title)
         replaceBHDDoubanIntro(data.url)
