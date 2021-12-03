@@ -155,7 +155,7 @@ async function replaceBHDDoubanIntro(url){
         .map(e => e.textContent.trim())
         .join('\n');
         let fix = description.replace(/^|\n/g, '<br>\n　　') + '\n\n'
-        let nodes = description.split(/^|\n/g)
+        // let nodes = description.split(/^|\n/g)
         let intro = document.querySelector('#torrentBigBookmarkExtension')
         intro.childNodes[0].nodeValue = ''
         intro.insertAdjacentHTML('afterbegin', fix);
@@ -183,9 +183,7 @@ async function replaceBHDDoubanIntro(url){
         if (!data)
             return;
         insertBHDDoubanRating(imdbSpan[0].parentElement, data.url, data.rating.average)
-        if (data.title) {
-            replaceBHDDoubanName(data.title)
-        }
+        replaceBHDDoubanName(data.title)
         replaceBHDDoubanIntro(data.url)
     }
 })();
