@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieRatings
 // @namespace    https://www.suwmlee.com/
-// @version      0.2.1
+// @version      0.2.2
 // @description  Show Douban ratings on BHD
 // @description: zh-CN 在tracker站点显示豆瓣评分
 // @author       Suwmlee
@@ -64,15 +64,6 @@ async function getJSON(url) {
 }
 
 async function getDoubanInfo(id) {
-    // // TODO: Remove this API completely if it doesn't come back.
-    // const data = await getJSON_GM(`https://api.douban.com/v2/movie/imdb/${id}?apikey=0df993c66c0c636e29ecbb5344252a4a`);
-    // if (data) {
-    //     if (isEmpty(data.alt))
-    //         return;
-    //     const url = data.alt.replace('/movie/', '/subject/') + '/';
-    //     return { url, rating: data.rating };
-    // }
-    // // Fallback to search.
     const search = await getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${id}`);
     if (search && search.length > 0 && search[0].id) {
         const abstract = await getJSON_GM(`https://movie.douban.com/j/subject_abstract?subject_id=${search[0].id}`);
@@ -89,47 +80,6 @@ function isEmpty(s) {
     return !s || s === 'N/A';
 }
 
-function insertDoubanRatingDiv(parent, title, rating, link, num_raters, histogram) {
-    let star = (5 * Math.round(rating)).toString();
-    if (star.length == 1)
-        star = '0' + star;
-    if (typeof rating === 'number')
-        rating = rating.toFixed(1);
-    let histogram_html = '';
-    if (histogram) {
-        histogram_html += '<div class="ratings-on-weight">';
-        const max = Object.values(histogram).reduce((r, n) => Math.max(r, n), 0);
-        for (let i = 10; i > 0; i--) {
-            const percent = histogram[i] * 100 / num_raters;
-            histogram_html += `<div class="item">
-                <span class="stars${i} starstop" style="width:18px;text-align:center">${i}</span>
-                <div class="power" style="width:${64 / max * histogram[i]}px"></div>
-                <span class="rating_per">${percent.toFixed(1)}%</span>
-                <br>
-            </div>`;
-        }
-        histogram_html += '</div>';
-    }
-    parent.insertAdjacentHTML('beforeend',
-        `<div class="rating_logo">${title}</div>
-        <div class="rating_self clearfix">
-            <strong class="ll rating_num">${rating}</strong>
-            <div class="rating_right">
-                <div class="ll bigstar${star}"></div>
-                <div style="clear: both" class="rating_sum"><a href=${link} target=_blank>${num_raters.toString().replace(/,/g, '')}人评价</a></div>
-            </div>
-        </div>` + histogram_html);
-}
-
-function insertDoubanInfo(name, value) {
-    const info = document.querySelector('#info');
-    if (info) {
-        if (info.lastElementChild.nodeName != 'BR')
-            info.insertAdjacentHTML('beforeend', '<br>');
-        info.insertAdjacentHTML('beforeend', `<span class="pl">${name}:</span> ${value}<br>`);
-    }
-}
-
 function insertBHDDoubanRating(parent, url, rating){
     parent.insertAdjacentHTML('beforeend', 
     `<span class="badge-meta2" title="豆瓣评分">
@@ -143,9 +93,11 @@ function insertBHDDoubanRating(parent, url, rating){
     const detail = $("a[title='IMDB']")[0].parentElement;
     detail.insertAdjacentHTML('afterend',
     `<span class="badge-meta2"><a href="${url}" title="豆瓣" target="_blank">
-        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="11px" height="11px" viewBox="0 0 11 11" enable-background="new 0 0 11 11" xml:space="preserve"> 
-            <image id="image0" width="11" height="11" x="0" y="0" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAMAAACecocUAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAA2FBMVEUWgSUAdQ4AdA0AdQ0NfR1sr3aZyKCWx50KexlUn110r3tyrnlWn14LehoAdhAegiuGuYuRwJaOvpOOv5OGuowhgiwCdhEAdg8wjT3j7+WgyqRdo2Fgpmadx5/i7+QHdRR3sn8efyojgi9zsHvf7eIJdRUpiTbS5dWz1biv0rRipmnw9/FPmlgngzPu9e9cpWYMdRcHehcdhCtLnVbY6dp1r3wthTZInVQihC4VeR8oizaq0LDR5dTY6dvV59jO49Gr0LApizYhhjAwjz07lUg6lUc6lUj///+7fLO6AAAAAWJLR0RHYL3JewAAAAd0SU1FB+UEDxExDPWxFNkAAAB/SURBVAjXFcbZAoFAAAXQWyqEKEtDTMJUyF7WCm3//0nMeTqAINY4UQAkWalziiyh0VRbnNruQOv2dKNv6IPhCCYZT6ypNaPE/p/OnYWzXBEG0/Wov/ap5zJo9mYb7IL9gR1xOl/C6BqFt/sDz1ecpO80iT9fZHlRVkVVFnn2A2t6DyUkoLRcAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA0LTE1VDE3OjQ5OjEyKzAwOjAw+Ka3VAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNC0xNVQxNzo0OToxMiswMDowMIn7D+gAAAAASUVORK5CYII="></image>
-        </svg>豆瓣
+        <i class="fab" style="vertical-align: middle;">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12px" height="11px" enable-background="new 0 0 12 12" xml:space="preserve">
+                <image width="100%" height="100%" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAMAAACecocUAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAA2FBMVEUWgSUAdQ4AdA0AdQ0NfR1sr3aZyKCWx50KexlUn110r3tyrnlWn14LehoAdhAegiuGuYuRwJaOvpOOv5OGuowhgiwCdhEAdg8wjT3j7+WgyqRdo2Fgpmadx5/i7+QHdRR3sn8efyojgi9zsHvf7eIJdRUpiTbS5dWz1biv0rRipmnw9/FPmlgngzPu9e9cpWYMdRcHehcdhCtLnVbY6dp1r3wthTZInVQihC4VeR8oizaq0LDR5dTY6dvV59jO49Gr0LApizYhhjAwjz07lUg6lUc6lUj///+7fLO6AAAAAWJLR0RHYL3JewAAAAd0SU1FB+UEDxExDPWxFNkAAAB/SURBVAjXFcbZAoFAAAXQWyqEKEtDTMJUyF7WCm3//0nMeTqAINY4UQAkWalziiyh0VRbnNruQOv2dKNv6IPhCCYZT6ypNaPE/p/OnYWzXBEG0/Wov/ap5zJo9mYb7IL9gR1xOl/C6BqFt/sDz1ecpO80iT9fZHlRVkVVFnn2A2t6DyUkoLRcAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA0LTE1VDE3OjQ5OjEyKzAwOjAw+Ka3VAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNC0xNVQxNzo0OToxMiswMDowMIn7D+gAAAAASUVORK5CYII="></image>
+            </svg>
+        </i> 豆瓣
     </a></span>`
     )
 
