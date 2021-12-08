@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         TrackerMovieRatings
 // @namespace    https://www.suwmlee.com/
-// @version      0.2.2
+// @version      0.3.0
 // @description  Show Douban ratings on BHD
-// @description: zh-CN 在tracker站点显示豆瓣评分
+// @description: zh-CN 在tracker站点显示豆瓣信息
 // @author       Suwmlee
 // @match        *://beyond-hd.me/torrents/*
 // @match        *://beyond-hd.me/library/title/*
 // @grant        GM.xmlHttpRequest
+// @grant        GM.setValue
+// @grant        GM.getValue
 // @connect      api.douban.com
 // @connect      movie.douban.com
 // @connect      p.media-imdb.com
@@ -64,15 +66,42 @@ async function getJSON(url) {
 }
 
 async function getDoubanInfo(id) {
+    let data = await GM.getValue("tmi-"+id)
+    if (data) {
+        console.log("already queried Douban Info")
+        return data;
+    }
     const search = await getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${id}`);
     if (search && search.length > 0 && search[0].id) {
         const abstract = await getJSON_GM(`https://movie.douban.com/j/subject_abstract?subject_id=${search[0].id}`);
         const average = abstract && abstract.subject && abstract.subject.rate ? abstract.subject.rate : '?';
-        return {
+        data = {
             url: `https://movie.douban.com/subject/${search[0].id}/`,
             rating: { numRaters: '', max: 10, average },
             title: search[0].title,
         };
+        GM.setValue("tmi-"+id, data);
+        return data
+    }
+}
+
+async function getDoubanIntro(url){
+    let data = await GM.getValue("tmi-intro-"+url)
+    if (data) {
+        console.log("already queried Douban Intro")
+        return data;
+    }
+    data = await getURL_GM(url);
+    if (data) {
+        let description = Array.from($('#link-report>[property="v:summary"],#link-report>span.all.hidden', data)[0].childNodes)
+        .filter(e => e.nodeType === 3)
+        .map(e => e.textContent.trim())
+        .join('\n');
+        let fix = description.replace(/^|\n/g, '<br>\n　　') + '\n\n'
+        if(fix.indexOf("<br>") == 0)
+            fix = fix.substring(4);
+        GM.setValue("tmi-intro-"+url, fix);
+        return fix
     }
 }
 
@@ -109,20 +138,11 @@ function replaceBHDDoubanName(name){
     bhdtitle.children[0].text = name
 }
 
-async function replaceBHDDoubanIntro(url){
-    const data = await getURL_GM(url);
-    if (data) {
-        let description = Array.from($('#link-report>[property="v:summary"],#link-report>span.all.hidden', data)[0].childNodes)
-        .filter(e => e.nodeType === 3)
-        .map(e => e.textContent.trim())
-        .join('\n');
-        let fix = description.replace(/^|\n/g, '<br>\n　　') + '\n\n'
-        if(fix.indexOf("<br>") == 0)
-            fix = fix.substring(4);
-        let intro = document.querySelector('#torrentBigBookmarkExtension')
-        intro.childNodes[0].nodeValue = ''
-        intro.insertAdjacentHTML('afterbegin', fix);
-    }
+function replaceBHDDoubanIntro(intro){
+    console.log(intro)
+    let introPos = document.querySelector('#torrentBigBookmarkExtension')
+    introPos.childNodes[0].nodeValue = ''
+    introPos.insertAdjacentHTML('afterbegin', intro);
 }
 
 (async () => {
@@ -146,6 +166,9 @@ async function replaceBHDDoubanIntro(url){
         console.log('GetDoubanInfo')
         insertBHDDoubanRating(imdbSpan[0].parentElement, data.url, data.rating.average)
         replaceBHDDoubanName(data.title)
-        replaceBHDDoubanIntro(data.url)
+        const intro = await getDoubanIntro(data.url)
+        if (!intro)
+            return;
+        replaceBHDDoubanIntro(intro)
     }
 })();
