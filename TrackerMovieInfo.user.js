@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         TrackerMovieRatings
+// @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.3.1
-// @description  Show Douban ratings on BHD
+// @version      0.3.2
+// @description  Show Douban ratings on Trackers
 // @description: zh-CN 在tracker站点显示豆瓣信息
 // @author       Suwmlee
 // @match        *://beyond-hd.me/torrents/*
