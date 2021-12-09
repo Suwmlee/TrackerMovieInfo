@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieRatings
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.3.0
+// @version      0.3.1
 // @description  Show Douban ratings on BHD
 // @description: zh-CN 在tracker站点显示豆瓣信息
 // @author       Suwmlee
@@ -10,6 +10,8 @@
 // @grant        GM.xmlHttpRequest
 // @grant        GM.setValue
 // @grant        GM.getValue
+// @grant        GM.listValues
+// @grant        GM.deleteValue
 // @connect      api.douban.com
 // @connect      movie.douban.com
 // @connect      p.media-imdb.com
@@ -80,13 +82,13 @@ async function getDoubanInfo(id) {
             rating: { numRaters: '', max: 10, average },
             title: search[0].title,
         };
-        GM.setValue("tmi-"+id, data);
+        setValue_GM("tmi-"+id, data);
         return data
     }
 }
 
-async function getDoubanIntro(url){
-    let data = await GM.getValue("tmi-intro-"+url)
+async function getDoubanIntro(id, url){
+    let data = await GM.getValue("tmi-"+id+"-intro")
     if (data) {
         console.log("already queried Douban Intro")
         return data;
@@ -100,8 +102,52 @@ async function getDoubanIntro(url){
         let fix = description.replace(/^|\n/g, '<br>\n　　') + '\n\n'
         if(fix.indexOf("<br>") == 0)
             fix = fix.substring(4);
-        GM.setValue("tmi-intro-"+url, fix);
+        setValue_GM("tmi-"+id+"-intro", fix);
         return fix
+    }
+}
+
+function isTodayGreater(d1, days){
+    d1 = new Date(d1);
+    return +new Date() > d1.setDate(d1.getDate() + (days||0))
+}
+
+function getFormattedDate(date){
+    let year = date.getFullYear();
+    let month = (1 + date.getMonth()).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    return month + '/' + day + '/' + year;
+}
+
+function setValue_GM(key, value){
+    GM.setValue(key, value);
+    let now = getFormattedDate(new Date())
+    GM.setValue(key+"-expired", now);
+}
+
+/**
+ * 清除过期缓存数据
+ * @param {Integer} expiredday 过期时间
+ */
+async function clearExpired(expiredday){
+    let TMIlist = await GM.listValues()
+    // console.log(TMIlist)
+    for (const skey of TMIlist) {
+        if (skey.startsWith("tmi-")){
+            if (skey.endsWith("-expired")) {
+                continue
+            }
+            let data = await GM.getValue(skey+"-expired")
+            if (!data) {
+                GM.deleteValue(skey);
+            }
+            // cache 
+            if (isTodayGreater(data, expiredday)){
+                console.log("clean tmi" + skey)
+                GM.deleteValue(skey);
+                GM.deleteValue(skey+"-expired");
+            }
+        }
     }
 }
 
@@ -166,9 +212,12 @@ function replaceBHDDoubanIntro(intro){
         console.log('GetDoubanInfo')
         insertBHDDoubanRating(imdbSpan[0].parentElement, data.url, data.rating.average)
         replaceBHDDoubanName(data.title)
-        const intro = await getDoubanIntro(data.url)
+        const intro = await getDoubanIntro(id, data.url)
         if (!intro)
             return;
         replaceBHDDoubanIntro(intro)
     }
+    // 缓存5天
+    clearExpired(5)
+
 })();
