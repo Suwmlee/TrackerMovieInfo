@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.3.2
+// @version      0.3.3
 // @description  Show Douban ratings on Trackers
 // @description: zh-CN 在tracker站点显示豆瓣信息
 // @author       Suwmlee
@@ -95,7 +95,7 @@ async function getDoubanIntro(id, url){
     }
     data = await getURL_GM(url);
     if (data) {
-        let description = Array.from($('#link-report>[property="v:summary"],#link-report>span.all.hidden', data)[0].childNodes)
+        let description = Array.from($('#link-report-intra>[property="v:summary"],#link-report-intra>span.all.hidden', data)[0].childNodes)
         .filter(e => e.nodeType === 3)
         .map(e => e.textContent.trim())
         .join('\n');
