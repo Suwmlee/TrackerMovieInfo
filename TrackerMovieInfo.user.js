@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.4.0
+// @version      0.4.1
 // @description  Show Douban ratings on Trackers
 // @description: zh-CN 在tracker站点显示豆瓣信息
 // @author       Suwmlee
@@ -168,7 +168,7 @@ function insertBHDDoubanRating(parent, url, rating) {
 
 function replaceBHDDoubanName(name) {
     console.log(name)
-    const bhdtitle = $("h1[class='bhd-sm-h1']")[0];
+    const bhdtitle = $("h1[class='bhd-title-h1']")[0];
     var origin = bhdtitle.children[0].text;
     bhdtitle.children[0].text = origin + " | " + name
 }
