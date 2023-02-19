@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.4.1
+// @version      0.5.0
 // @description  Show Douban ratings on Trackers
 // @description: zh-CN 在tracker站点显示豆瓣信息
 // @author       Suwmlee
@@ -273,6 +273,9 @@ if (site_url.match(/^https?:\/\/passthepopcorn.me\/torrents.php.*/) ) {
     }
 
     function setGroupName(groupname, target){
+        if(groupname == null || groupname == ''){
+            return
+        }
         var color = true;
         if ($(target).parent().find('.golden-popcorn-character').length) {
             color = false;
