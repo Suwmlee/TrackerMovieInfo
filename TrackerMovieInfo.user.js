@@ -526,37 +526,25 @@ if (site_url.match(/^https?:\/\/passthepopcorn.me\/torrents.php\?id.*/) ){
         }
 
         $('#movie-ratings-table tr').prepend(
-            `<td colspan="1" style="width: 152px;">
+            `<td colspan="1" style="width: 95px;">
             <center>
             <a target="_blank" class="rating" href="https://movie.douban.com/subject/${data.id}" rel="noreferrer">
-            <div style="font-size: 0;min-width: 105px;">
-                <span class="icon-pt1" style="font-size: 14px;
+            <div>
+                <span class="icon-pt1" style="font-size: 25px;
                 display: inline-block;
                 text-align: center;
                 border: 1px solid #41be57;
                 background-color: #41be57;
                 color: white;
-                border-top-left-radius: 4px;
-                border-bottom-left-radius: 4px;
-                width: 24px;
-                height: 24px;
-                line-height: 24px;">豆</span>
-                <span class="icon-pt2" style="font-size: 14px;
-                display: inline-block;
-                text-align: center;
-                border: 1px solid #41be57;
-                color: #3ba94d;
-                background: #ffffff;
-                border-top-right-radius: 4px;
-                border-bottom-right-radius: 4px;
-                width: 69px;
-                height: 24px;
-                line-height: 24px;">豆瓣评分</span>
+                border-radius: 10px;
+                width: 40px;
+                height: 40px;
+                line-height: 36px;">豆</span>
             </div>
             </a>
             </center>
             </td>
-            <td style="width: 153px;">
+            <td style="width: 120px;">
             <span class="rating">${data.average}</span>
             <span class="mid">${split}</span>
             <span class="outof"> ${total} </span>
