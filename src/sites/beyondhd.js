@@ -48,8 +48,8 @@ export default async () => {
     console.log('GetDoubanInfo')
     insertBHDDoubanRating(imdbSpan[0].parentElement, data.url, data.rating.average)
     replaceBHDDoubanName(data.title)
-    const intro = await getDoubanIntro(imdbId, data.url)
-    if (!intro)
+    const detail = await getDoubanIntro(imdbId, data.url)
+    if (!detail)
         return;
-    replaceBHDDoubanIntro(intro)
+    replaceBHDDoubanIntro(detail.summary)
 }
