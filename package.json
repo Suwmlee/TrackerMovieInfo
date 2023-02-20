@@ -1,0 +1,21 @@
+{
+  "name": "trackermovieinfo",
+  "version": "0.6.0",
+  "description": "在pt站显示豆瓣信息",
+  "author": "suwmlee",
+  "main": "index.js",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node scripts/dev.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Suwmlee/TrackerMovieInfo"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/Suwmlee/TrackerMovieInfo#readme",
+  "dependencies": {
+    "esbuild": "^0.16.7",
+    "eslint": "^8.29.0"
+  }
+}
