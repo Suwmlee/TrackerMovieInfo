@@ -47,6 +47,7 @@ const getDoubanInfo = (imdbLink, callback) => {
         console.log("already stored Douban Info")
         callback(data);
     } else {
+        console.log("querying Douban Info...")
         getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${imdbId}`, function (search) {
             if (search && search.length > 0 && search[0].id) {
                 data = {
