@@ -44,10 +44,10 @@ const getDoubanInfo = (imdbLink, callback) => {
     let imdbId = imdbLink.match(/tt\d+/);
     let data = GM_getValue("douban-" + imdbId)
     if (data) {
-        console.log("already stored Douban Info")
+        console.log("[TMI]已经存储此豆瓣词条")
         callback(data);
     } else {
-        console.log("querying Douban Info...")
+        console.log("[TMI]查询豆瓣词条...")
         getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${imdbId}`, function (search) {
             if (search && search.length > 0 && search[0].id) {
                 data = {
@@ -70,6 +70,35 @@ const getDoubanInfo = (imdbLink, callback) => {
     }
 }
 
+const doubaninit = () => {
+    var site_url = decodeURI(location.href);
+    var subject_url = site_url.match(/https?:\/\/movie.douban.com\/subject\/\d+/)
+    if (subject_url) {
+        try {
+            let imdbId = $('#info span.pl:contains("IMDb")', document)[0].nextSibling.textContent.trim();
+            if (!imdbId) {
+                imdbId = $('#info span.pl:contains("IMDb")', document)[0].nextSibling.nextSibling.textContent.trim();
+                if (!imdbId) return;
+            }
+            let data = GM_getValue("douban-" + imdbId)
+            if (data) {
+                console.log("[TMI]已经存储此豆瓣词条")
+            } else {
+                console.log("[TMI]豆瓣页面内,尝试获取词条信息...")
+                let details = parseDoubanDetail(document);
+                details.id = subject_url[0].match(/\d+/);
+                details.url = subject_url[0];
+                details.title = document.title.replace("(豆瓣)", "").trim();
+
+                setValue_GM("douban-" + imdbId, details);
+            }
+        } catch (error) {
+
+        }
+    }
+}
+
 export {
-    getDoubanInfo
+    getDoubanInfo,
+    doubaninit,
 }

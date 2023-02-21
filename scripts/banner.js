@@ -7,6 +7,7 @@ exports.userScriptComment = `// ==UserScript==
 // @version      ${version}
 // @description  ${description}
 // @author       ${author}
+// @match        *://movie.douban.com/subject/*
 // @match        *://beyond-hd.me/torrents/*
 // @match        *://beyond-hd.me/library/title/*
 // @match        *://passthepopcorn.me/torrents*

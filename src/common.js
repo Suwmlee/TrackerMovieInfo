@@ -23,7 +23,6 @@ const setValue_GM = (key, value) => {
  */
 const clearExpired = (expiredday) => {
     let TMIlist = GM_listValues()
-    // console.log(TMIlist)
     for (const skey of TMIlist) {
         if (skey.startsWith("douban-")) {
             if (skey.endsWith("-added")) {
@@ -35,7 +34,7 @@ const clearExpired = (expiredday) => {
             }
             // cache
             if (isTodayGreater(data, expiredday)) {
-                console.log("clean " + skey)
+                console.log("[TMI] 清理 " + skey)
                 GM_deleteValue(skey);
                 GM_deleteValue(skey + "-added");
             }

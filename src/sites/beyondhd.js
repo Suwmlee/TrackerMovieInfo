@@ -18,14 +18,12 @@ function replaceBHDDoubanName(data) {
 }
 
 function replaceBHDDoubanIntro(intro) {
-    console.log(intro)
     const detail = $("div[class='movie-overview']")[0];
     detail.innerHTML = intro
 }
 
 
 export default () => {
-    console.log('Start BHD MovieInfo')
     const imdbSpan = $("span[title='IMDb Rating']");
     if (!imdbSpan) {
         return;

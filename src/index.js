@@ -1,8 +1,10 @@
 import { clearExpired } from './common';
+import { doubaninit } from './douban';
 import siteinit from './sites';
 
 (() => {
-    siteinit()
+    doubaninit();
+    siteinit();
     // 缓存5天
-    clearExpired(5)
+    clearExpired(5);
 })();
