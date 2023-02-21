@@ -12,11 +12,9 @@ function insertBHDDoubanRating(parent, url, rating) {
     </span>`);
 }
 
-function replaceBHDDoubanName(name) {
-    console.log(name)
-    const bhdtitle = $("h1[class='bhd-title-h1']")[0];
-    var origin = bhdtitle.children[0].text;
-    bhdtitle.children[0].text = origin + " | " + name
+function replaceBHDDoubanName(data) {
+    const bhdtitle = $("h1[class='bhd-title-h1']");
+    bhdtitle.prepend(`<a  target='_blank' href="https://movie.douban.com/subject/${data.id}">${data.title.split(' ')[0]} </a>`);
 }
 
 function replaceBHDDoubanIntro(intro) {
@@ -39,8 +37,7 @@ export default () => {
     getDoubanInfo(imdbLink, function (detail) {
         if (!detail)
             return;
-        console.log('GetDoubanInfo')
-        replaceBHDDoubanName(detail.title)
+        replaceBHDDoubanName(detail)
         insertBHDDoubanRating(imdbSpan[0].parentElement, detail.url, detail.average)
         replaceBHDDoubanIntro(detail.summary)
     })
