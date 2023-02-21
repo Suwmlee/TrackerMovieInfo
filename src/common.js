@@ -25,7 +25,7 @@ const clearExpired = (expiredday) => {
     let TMIlist = GM_listValues()
     // console.log(TMIlist)
     for (const skey of TMIlist) {
-        if (skey.startsWith("tmi-")) {
+        if (skey.startsWith("douban-")) {
             if (skey.endsWith("-expired")) {
                 continue
             }

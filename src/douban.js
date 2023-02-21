@@ -44,7 +44,7 @@ function parseDoubanDetail(html){
 
 const getDoubanInfo = (imdbLink, callback) => {
     let imdbId = imdbLink.match(/tt\d+/);
-    let data = GM_getValue("tmi-" + imdbId)
+    let data = GM_getValue("douban-" + imdbId)
     if (data) {
         console.log("already queried Douban Info")
         callback(data);
@@ -61,7 +61,7 @@ const getDoubanInfo = (imdbLink, callback) => {
                     let details = parseDoubanDetail(html);
                     details.url = data.url;
                     details.id = data.id;
-                    setValue_GM("tmi-" + imdbId, details);
+                    setValue_GM("douban-" + imdbId, details);
                     callback(details);
                 }
             });
