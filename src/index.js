@@ -1,8 +1,5 @@
-import {
-    clearExpired,
-} from './common';
+import { clearExpired } from './common';
 import siteinit from './sites';
-
 
 (() => {
     siteinit()

@@ -8,7 +8,7 @@ let siteinit = () => {
     let host = location.hostname;
     if (host === 'beyond-hd.me') {
         bhdinit()
-    } else if (host === 'passthepopcorn.me'){
+    } else if (host === 'passthepopcorn.me') {
         ptpinit()
     }
 }
