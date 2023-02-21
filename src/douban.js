@@ -7,10 +7,9 @@ import {
 } from './request';
 
 function parseDoubanDetail(html){
+    // 解析页面，不包含url与id
     var raw_data = {};
     raw_data.title = $("title", html).text().replace("(豆瓣)", "").trim();
-    raw_data.url = $('meta[property="og:url"]', html).attr('content')
-    raw_data.id = raw_data.url.match(/subject\/(\d+)/)[1];
     try {
         raw_data.image = $('#mainpic img', html)[0].src.replace(
             /^.+(p\d+).+$/,
@@ -43,83 +42,33 @@ function parseDoubanDetail(html){
     return raw_data;
 }
 
-const getDoubanInfo = (id) => {
-    let data = GM_getValue("tmi-" + id)
+const getDoubanInfo = (imdbLink, callback) => {
+    let imdbId = imdbLink.match(/tt\d+/);
+    let data = GM_getValue("tmi-" + imdbId)
     if (data) {
         console.log("already queried Douban Info")
-        return data;
+        callback(data);
     }
-    const search = getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${id}`);
-    if (search && search.length > 0 && search[0].id) {
-        const abstract = getJSON_GM(`https://movie.douban.com/j/subject_abstract?subject_id=${search[0].id}`);
-        const average = abstract && abstract.subject && abstract.subject.rate ? abstract.subject.rate : '?';
-        data = {
-            url: `https://movie.douban.com/subject/${search[0].id}/`,
-            rating: { numRaters: '', max: 10, average },
-            title: search[0].title,
-        };
-        setValue_GM("tmi-" + id, data);
-        return data
-    }
-}
-
-const getDoubanIntro = (id, url) => {
-    let data = GM_getValue("tmi-" + id + "-detail")
-    if (data) {
-        console.log("already queried Douban Intro")
-        return data;
-    }
-    let html = getURL_GM(url);
-    if (html) {
-        data = parseDoubanDetail(html)
-        setValue_GM("tmi-" + id + "-detail", data);
-        return data;
-    }
-}
-
-
-function page_parser(responseText) {
-    responseText = responseText.replace(/s+src=/ig, ' data-src=');
-    responseText = responseText.replace(/<script[^>]*?>[\S\s]*?<\/script>/ig, '');
-    return (new DOMParser()).parseFromString(responseText, 'text/html');
-}
-function getDoc(url, meta, callback) {
-    GM_xmlhttpRequest({
-        method: 'GET',
-        url: url,
-        onload: function (responseDetail) {
-            if (responseDetail.status === 200) {
-                let doc = page_parser(responseDetail.responseText);
-                callback(doc, responseDetail, meta);
-            } else {
-                callback('error', null, null);
-            }
-        }
-    });
-}
-
-const getData = (imdb_url, callback) => {
-    var imdb_id = imdb_url.match(/tt\d+/)[0];
-    var search_url = 'https://m.douban.com/search/?query=' + imdb_id + '&type=movie';
-    getDoc(search_url, null, function(doc) {
-        if ($('ul.search_results_subjects', doc).length) {
-            var douban_url = 'https://movie.douban.com/subject/' + $('ul.search_results_subjects', doc).find('a').attr('href').match(/subject\/(\d+)/)[1];
-            if (douban_url.search('35580200') > -1) {
-                return;
-            }
-            getDoc(douban_url, null, function(html) {
-                raw_data = parseDoubanDetail(html)
-                var data = {'data':raw_data};
-                callback(data)
+    getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${imdbId}`, function(search){
+        if (search && search.length > 0 && search[0].id) {
+            data = {
+                id: search[0].id,
+                url: `https://movie.douban.com/subject/${search[0].id}/`,
+                title: search[0].title,
+            };
+            getURL_GM(data.url, function(html){
+                if (html) {
+                    let details = parseDoubanDetail(html);
+                    details.url = data.url;
+                    details.id = data.id;
+                    setValue_GM("tmi-" + imdbId, details);
+                    callback(details);
+                }
             });
         }
     });
 }
 
-
-
 export {
-    getDoubanInfo,
-    getDoubanIntro,
-    getData,
+    getDoubanInfo
 }

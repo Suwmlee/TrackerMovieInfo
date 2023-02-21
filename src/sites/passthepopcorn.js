@@ -1,4 +1,4 @@
-import { getData } from "../douban";
+import { getDoubanInfo } from "../douban";
 
 export default () =>{
     var site_url = decodeURI(location.href);
@@ -223,10 +223,9 @@ export default () =>{
                 return;
             }
             console.log('正在获取数据……');
-            getData(imdbLink, function(data){
-                console.log(data);
-                if (data.data) {
-                    addInfoToPage(data['data']);
+            getDoubanInfo(imdbLink, function(detail){
+                if (detail) {
+                    addInfoToPage(detail);
                 } else {
                     return;
                 }

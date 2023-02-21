@@ -1,7 +1,4 @@
-import {
-    getDoubanInfo,
-    getDoubanIntro,
-} from '../douban'
+import { getDoubanInfo } from '../douban'
 
 
 function insertBHDDoubanRating(parent, url, rating) {
@@ -39,17 +36,12 @@ export default () => {
     if (!imdbLink) {
         return;
     }
-    const imdbId = imdbLink.match(/tt\d+/);
-    if (!imdbId)
-        return;
-    const data = getDoubanInfo(imdbId);
-    if (!data)
-        return;
-    console.log('GetDoubanInfo')
-    insertBHDDoubanRating(imdbSpan[0].parentElement, data.url, data.rating.average)
-    replaceBHDDoubanName(data.title)
-    const detail = getDoubanIntro(imdbId, data.url)
-    if (!detail)
-        return;
-    replaceBHDDoubanIntro(detail.summary)
+    getDoubanInfo(imdbLink, function (detail) {
+        if (!detail)
+            return;
+        console.log('GetDoubanInfo')
+        replaceBHDDoubanName(detail.title)
+        insertBHDDoubanRating(imdbSpan[0].parentElement, detail.url, detail.average)
+        replaceBHDDoubanIntro(detail.summary)
+    })
 }

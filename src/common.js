@@ -35,7 +35,7 @@ const clearExpired = (expiredday) => {
             }
             // cache
             if (isTodayGreater(data, expiredday)) {
-                console.log("clean tmi" + skey)
+                console.log("clean " + skey)
                 GM_deleteValue(skey);
                 GM_deleteValue(skey + "-expired");
             }
