@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.6.1
+// @version      0.6.2
 // @description  在pt站显示豆瓣信息
 // @author       suwmlee
+// @match        *://movie.douban.com/subject/*
 // @match        *://beyond-hd.me/torrents/*
 // @match        *://beyond-hd.me/library/title/*
 // @match        *://passthepopcorn.me/torrents*
@@ -46,7 +47,7 @@
           GM_deleteValue(skey);
         }
         if (isTodayGreater(data, expiredday)) {
-          console.log("clean " + skey);
+          console.log("[TMI] \u6E05\u7406 " + skey);
           GM_deleteValue(skey);
           GM_deleteValue(skey + "-added");
         }
@@ -164,10 +165,10 @@
     let imdbId = imdbLink.match(/tt\d+/);
     let data = GM_getValue("douban-" + imdbId);
     if (data) {
-      console.log("already stored Douban Info");
+      console.log("[TMI]\u5DF2\u7ECF\u5B58\u50A8\u6B64\u8C46\u74E3\u8BCD\u6761");
       callback(data);
     } else {
-      console.log("querying Douban Info...");
+      console.log("[TMI]\u67E5\u8BE2\u8C46\u74E3\u8BCD\u6761...");
       getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${imdbId}`, function(search) {
         if (search && search.length > 0 && search[0].id) {
           data = {
@@ -189,6 +190,32 @@
       });
     }
   };
+  var doubaninit = () => {
+    var site_url = decodeURI(location.href);
+    var subject_url = site_url.match(/https?:\/\/movie.douban.com\/subject\/\d+/);
+    if (subject_url) {
+      try {
+        let imdbId = $('#info span.pl:contains("IMDb")', document)[0].nextSibling.textContent.trim();
+        if (!imdbId) {
+          imdbId = $('#info span.pl:contains("IMDb")', document)[0].nextSibling.nextSibling.textContent.trim();
+          if (!imdbId)
+            return;
+        }
+        let data = GM_getValue("douban-" + imdbId);
+        if (data) {
+          console.log("[TMI]\u5DF2\u7ECF\u5B58\u50A8\u6B64\u8C46\u74E3\u8BCD\u6761");
+        } else {
+          console.log("[TMI]\u8C46\u74E3\u9875\u9762\u5185,\u5C1D\u8BD5\u83B7\u53D6\u8BCD\u6761\u4FE1\u606F...");
+          let details = parseDoubanDetail(document);
+          details.id = subject_url[0].match(/\d+/);
+          details.url = subject_url[0];
+          details.title = document.title.replace("(\u8C46\u74E3)", "").trim();
+          setValue_GM("douban-" + imdbId, details);
+        }
+      } catch (error) {
+      }
+    }
+  };
 
   // src/sites/beyondhd.js
   function insertBHDDoubanRating(parent, url, rating) {
@@ -208,12 +235,10 @@
     bhdtitle.prepend(`<a  target='_blank' href="https://movie.douban.com/subject/${data.id}">${data.title.split(" ")[0]} </a>`);
   }
   function replaceBHDDoubanIntro(intro) {
-    console.log(intro);
     const detail = $("div[class='movie-overview']")[0];
     detail.innerHTML = intro;
   }
   var beyondhd_default = () => {
-    console.log("Start BHD MovieInfo");
     const imdbSpan = $("span[title='IMDb Rating']");
     if (!imdbSpan) {
       return;
@@ -523,6 +548,7 @@
 
   // src/index.js
   (() => {
+    doubaninit();
     sites_default();
     clearExpired(5);
   })();
