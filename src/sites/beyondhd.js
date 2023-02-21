@@ -29,7 +29,7 @@ function replaceBHDDoubanIntro(intro) {
 }
 
 
-export default async () => {
+export default () => {
     console.log('Start BHD MovieInfo')
     const imdbSpan = $("span[title='IMDb Rating']");
     if (!imdbSpan) {
@@ -42,13 +42,13 @@ export default async () => {
     const imdbId = imdbLink.match(/tt\d+/);
     if (!imdbId)
         return;
-    const data = await getDoubanInfo(imdbId);
+    const data = getDoubanInfo(imdbId);
     if (!data)
         return;
     console.log('GetDoubanInfo')
     insertBHDDoubanRating(imdbSpan[0].parentElement, data.url, data.rating.average)
     replaceBHDDoubanName(data.title)
-    const detail = await getDoubanIntro(imdbId, data.url)
+    const detail = getDoubanIntro(imdbId, data.url)
     if (!detail)
         return;
     replaceBHDDoubanIntro(detail.summary)

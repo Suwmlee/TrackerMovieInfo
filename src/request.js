@@ -1,7 +1,7 @@
 
 
 const getURL_GM = (url) => {
-    return new Promise(resolve => GM.xmlHttpRequest({
+    return new Promise(resolve => GM_xmlHttpRequest({
         method: 'GET',
         url: url,
         onload: function (response) {
@@ -13,21 +13,21 @@ const getURL_GM = (url) => {
             }
         },
         onerror: function (response) {
-            console.error(`Error during GM.xmlHttpRequest to ${url}:`, response.statusText);
+            console.error(`Error during GM_xmlHttpRequest to ${url}:`, response.statusText);
             resolve();
         }
     }));
 }
 
-const getJSON_GM = async (url) => {
-    const data = await getURL_GM(url);
+const getJSON_GM = (url) => {
+    const data = getURL_GM(url);
     if (data) {
         return JSON.parse(data);
     }
 }
 
-const getJSONP_GM = async (url) => {
-    const data = await getURL_GM(url);
+const getJSONP_GM = (url) => {
+    const data = getURL_GM(url);
     if (data) {
         const end = data.lastIndexOf(')');
         const [, json] = data.substring(0, end).split('(', 2);
@@ -35,22 +35,9 @@ const getJSONP_GM = async (url) => {
     }
 }
 
-const getJSON = async (url) => {
-    try {
-        const response = await fetch(url);
-        if (response.status >= 200 && response.status < 400)
-            return await response.json();
-        console.error(`Error fetching ${url}:`, response.status, response.statusText, await response.text());
-    }
-    catch (e) {
-        console.error(`Error fetching ${url}:`, e);
-    }
-}
-
 export{
     getURL_GM,
     getJSON_GM,
     getJSONP_GM,
-    getJSON,
 }
 

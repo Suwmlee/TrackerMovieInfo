@@ -9,14 +9,14 @@ import {
 function parseDoubanDetail(html){
     var raw_data = {};
     raw_data.title = $("title", html).text().replace("(豆瓣)", "").trim();
+    raw_data.url = $('meta[property="og:url"]', html).attr('content')
+    raw_data.id = raw_data.url.match(/subject\/(\d+)/)[1];
     try {
         raw_data.image = $('#mainpic img', html)[0].src.replace(
             /^.+(p\d+).+$/,
             (_, p1) => `https://img9.doubanio.com/view/photo/l_ratio_poster/public/${p1}.jpg`
         );
     } catch(e) {raw_data.image = 'null'}
-
-    // raw_data.id = douban_url.match(/subject\/(\d+)/)[1];
     try { raw_data.year = parseInt($('#content>h1>span.year', html).text().slice(1, -1)); } catch(e) {raw_data.year = ''}
     try { raw_data.aka = $('#info span.pl:contains("又名")', html)[0].nextSibling.textContent.trim(); } catch(e) {raw_data.aka = 'null'}
     try { raw_data.average = parseFloat($('#interest_sectl', html).find('[property="v:average"]').text()); } catch(e) {raw_data.average = ''}
@@ -43,15 +43,15 @@ function parseDoubanDetail(html){
     return raw_data;
 }
 
-const getDoubanInfo = async (id) => {
-    let data = await GM.getValue("tmi-" + id)
+const getDoubanInfo = (id) => {
+    let data = GM_getValue("tmi-" + id)
     if (data) {
         console.log("already queried Douban Info")
         return data;
     }
-    const search = await getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${id}`);
+    const search = getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${id}`);
     if (search && search.length > 0 && search[0].id) {
-        const abstract = await getJSON_GM(`https://movie.douban.com/j/subject_abstract?subject_id=${search[0].id}`);
+        const abstract = getJSON_GM(`https://movie.douban.com/j/subject_abstract?subject_id=${search[0].id}`);
         const average = abstract && abstract.subject && abstract.subject.rate ? abstract.subject.rate : '?';
         data = {
             url: `https://movie.douban.com/subject/${search[0].id}/`,
@@ -63,13 +63,13 @@ const getDoubanInfo = async (id) => {
     }
 }
 
-const getDoubanIntro = async (id, url) => {
-    let data = await GM.getValue("tmi-" + id + "-detail")
+const getDoubanIntro = (id, url) => {
+    let data = GM_getValue("tmi-" + id + "-detail")
     if (data) {
         console.log("already queried Douban Intro")
         return data;
     }
-    let html = await getURL_GM(url);
+    let html = getURL_GM(url);
     if (html) {
         data = parseDoubanDetail(html)
         setValue_GM("tmi-" + id + "-detail", data);

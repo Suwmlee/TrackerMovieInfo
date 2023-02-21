@@ -11,12 +11,11 @@ exports.userScriptComment = `// ==UserScript==
 // @match        *://beyond-hd.me/library/title/*
 // @match        *://passthepopcorn.me/torrents*
 // @match        *://passthepopcorn.me/torrents.php?id*
-// @grant        GM.xmlHttpRequest
 // @grant        GM_xmlhttpRequest
-// @grant        GM.setValue
-// @grant        GM.getValue
-// @grant        GM.listValues
-// @grant        GM.deleteValue
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @grant        GM_listValues
+// @grant        GM_deleteValue
 // @connect      api.douban.com
 // @connect      movie.douban.com
 // @connect      m.douban.com
