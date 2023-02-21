@@ -9,7 +9,6 @@ import {
 function parseDoubanDetail(html){
     // 解析页面，不包含url与id
     var raw_data = {};
-    raw_data.title = $("title", html).text().replace("(豆瓣)", "").trim();
     try {
         raw_data.image = $('#mainpic img', html)[0].src.replace(
             /^.+(p\d+).+$/,
@@ -59,8 +58,9 @@ const getDoubanInfo = (imdbLink, callback) => {
             getURL_GM(data.url, function(html){
                 if (html) {
                     let details = parseDoubanDetail(html);
-                    details.url = data.url;
                     details.id = data.id;
+                    details.url = data.url;
+                    details.title = data.title;
                     setValue_GM("douban-" + imdbId, details);
                     callback(details);
                 }
