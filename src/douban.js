@@ -47,26 +47,27 @@ const getDoubanInfo = (imdbLink, callback) => {
     if (data) {
         console.log("already queried Douban Info")
         callback(data);
+    }else{
+        getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${imdbId}`, function (search) {
+            if (search && search.length > 0 && search[0].id) {
+                data = {
+                    id: search[0].id,
+                    url: `https://movie.douban.com/subject/${search[0].id}/`,
+                    title: search[0].title,
+                };
+                getURL_GM(data.url, function (html) {
+                    if (html) {
+                        let details = parseDoubanDetail(html);
+                        details.id = data.id;
+                        details.url = data.url;
+                        details.title = data.title;
+                        setValue_GM("douban-" + imdbId, details);
+                        callback(details);
+                    }
+                });
+            }
+        });
     }
-    getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${imdbId}`, function(search){
-        if (search && search.length > 0 && search[0].id) {
-            data = {
-                id: search[0].id,
-                url: `https://movie.douban.com/subject/${search[0].id}/`,
-                title: search[0].title,
-            };
-            getURL_GM(data.url, function(html){
-                if (html) {
-                    let details = parseDoubanDetail(html);
-                    details.id = data.id;
-                    details.url = data.url;
-                    details.title = data.title;
-                    setValue_GM("douban-" + imdbId, details);
-                    callback(details);
-                }
-            });
-        }
-    });
 }
 
 export {
