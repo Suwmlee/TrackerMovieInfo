@@ -2,7 +2,7 @@
 
 在Tracker站点显示豆瓣信息
 
-[安装](https://github.com/Suwmlee/TrackerMovieInfo/raw/master/TrackerMovieInfo.user.js)
+[安装](https://github.com/Suwmlee/TrackerMovieInfo/raw/master/dist/tracker-movie-info.user.js)
 
 #### 展示
 
