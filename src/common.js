@@ -14,7 +14,7 @@ const getFormattedDate = (date) => {
 const setValue_GM = (key, value) => {
     GM_setValue(key, value);
     let now = getFormattedDate(new Date())
-    GM_setValue(key + "-expired", now);
+    GM_setValue(key + "-added", now);
 }
 
 /**
@@ -26,10 +26,10 @@ const clearExpired = (expiredday) => {
     // console.log(TMIlist)
     for (const skey of TMIlist) {
         if (skey.startsWith("douban-")) {
-            if (skey.endsWith("-expired")) {
+            if (skey.endsWith("-added")) {
                 continue
             }
-            let data = GM_getValue(skey + "-expired")
+            let data = GM_getValue(skey + "-added")
             if (!data) {
                 GM_deleteValue(skey);
             }
@@ -37,7 +37,7 @@ const clearExpired = (expiredday) => {
             if (isTodayGreater(data, expiredday)) {
                 console.log("clean " + skey)
                 GM_deleteValue(skey);
-                GM_deleteValue(skey + "-expired");
+                GM_deleteValue(skey + "-added");
             }
         }
     }
