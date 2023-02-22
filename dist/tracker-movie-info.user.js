@@ -330,12 +330,12 @@
                 url: req,
                 onload: function(res) {
                   var response = JSON.parse(res.responseText);
-                  if (response.length > 0) {
+                  if (response && response.length > 0 && response[0].id) {
                     a.href = `https://movie.douban.com/subject/${response[0].id}/`;
+                    window.open(a.href, target = "_blank");
                   } else {
-                    a.href = douban_prex + imdb_id;
+                    alert("\u65E0\u5339\u914D\u8C46\u74E3\u8BCD\u6761,\u53EF\u80FD\u672A\u6DFB\u52A0\u6216\u5DF2\u88AB\u5C4F\u853D...");
                   }
-                  window.open(a.href, target = "_blank");
                 }
               });
             };
