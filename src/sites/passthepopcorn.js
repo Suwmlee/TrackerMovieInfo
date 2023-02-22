@@ -90,12 +90,12 @@ export default () => {
                             url: req,
                             onload: function (res) {
                                 var response = JSON.parse(res.responseText);
-                                if (response.length > 0) {
+                                if (response && response.length > 0 && response[0].id) {
                                     a.href = `https://movie.douban.com/subject/${response[0].id}/`;
+                                    window.open(a.href, target = "_blank")
                                 } else {
-                                    a.href = douban_prex + imdb_id;
+                                    alert("无匹配豆瓣词条,可能未添加或已被屏蔽...")
                                 }
-                                window.open(a.href, target = "_blank")
                             }
                         });
                     }
