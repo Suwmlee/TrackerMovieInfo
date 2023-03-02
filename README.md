@@ -13,5 +13,9 @@
 ![fixed](imgs/fixed.png)
 
 - 替换电影名字和剧情介绍
-- 在IMDB评分旁增加豆瓣评分
+- 增加豆瓣评分
 - 增加跳转豆瓣按钮
+
+### 致谢
+
+[auto-feed](https://github.com/tomorrow505/auto_feed_js)
