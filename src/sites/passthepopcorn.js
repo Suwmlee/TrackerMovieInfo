@@ -8,7 +8,7 @@ export default () => {
         const coloredfont = true;
         const groupnamecolor = '#20B2AA';
 
-        const showblankgroups = true;
+        const showblankgroups = false;
         const placeholder = 'Null';
 
         const delimiter = ' / ';
@@ -24,9 +24,6 @@ export default () => {
         }
 
         function setGroupName(groupname, target) {
-            if (groupname == null || groupname == '') {
-                return
-            }
             var color = true;
             if ($(target).parent().find('.golden-popcorn-character').length) {
                 color = false;
