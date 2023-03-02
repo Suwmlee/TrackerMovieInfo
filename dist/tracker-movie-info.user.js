@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.6.2
-// @description  在pt站显示豆瓣信息
+// @version      0.6.3
+// @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
 // @match        *://beyond-hd.me/torrents/*
@@ -268,9 +268,6 @@
           style.push(`color:${groupnamecolor}`);
         return `<span style="${style.join(";")}">${str}</span>`;
       }, setGroupName = function(groupname, target) {
-        if (groupname == null || groupname == "") {
-          return;
-        }
         var color = true;
         if ($(target).parent().find(".golden-popcorn-character").length) {
           color = false;
@@ -350,7 +347,7 @@
       const boldfont = true;
       const coloredfont = true;
       const groupnamecolor = "#20B2AA";
-      const showblankgroups = true;
+      const showblankgroups = false;
       const placeholder = "Null";
       const delimiter = " / ";
       const blockedgroup = "TBB";
