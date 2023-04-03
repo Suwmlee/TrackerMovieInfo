@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.0
+// @version      0.7.1
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -575,7 +575,7 @@
                                     <tr><th>\u6F14\u5458</th><td>${data.cast.replace(/\//g, "<br>    ")}</td></tr>
                                 </tbody></table></td>
                                 <td id="plotcell"><table class="content" cellspacing="0"><tbody>
-                                    <tr><th>\u7B80\u4ECB</th></tr><tr><td>${data.summary == "" ? "\u672C\u7247\u6682\u65E0\u7B80\u4ECB" : "\u3000\u3000" + data.summary.replace(/ 　　/g, "<br>\u3000\u3000")}</td></tr>
+                                    <tr><th>\u7B80\u4ECB</th></tr><tr><td>${data.summary == "" ? "\u672C\u7247\u6682\u65E0\u7B80\u4ECB" : data.summary.replace(/ 　　/g, "<br>\u3000\u3000")}</td></tr>
                                 </tbody></table></td>
                             </tr>
                             <tr>
@@ -614,7 +614,7 @@
           const hdbtitle = $("table.contentlayout").find('a[href^="https://www.imdb.com/title/"]');
           hdbtitle.prepend(`<a  target='_blank' href="https://movie.douban.com/subject/${data.id}">[${data.title.split(" ")[0]}] </a>`);
           $("#plotcell")[0].innerHTML = `<table class="content" cellspacing="0"><tbody>
-                <tr><th>\u7B80\u4ECB</th></tr><tr><td>${data.summary == "" ? "\u672C\u7247\u6682\u65E0\u7B80\u4ECB" : "\u3000\u3000" + data.summary.replace(/ 　　/g, "<br>\u3000\u3000")}</td></tr>
+                <tr><th>\u7B80\u4ECB</th></tr><tr><td>${data.summary == "" ? "\u672C\u7247\u6682\u65E0\u7B80\u4ECB" : data.summary.replace(/ 　　/g, "<br>\u3000\u3000")}</td></tr>
             </tbody></table>`;
         };
         var links = $("table.contentlayout").find('a[href^="https://www.imdb.com/title/"]');

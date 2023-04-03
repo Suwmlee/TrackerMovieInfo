@@ -43,7 +43,7 @@ export default () => {
                                     <tr><th>演员</th><td>${data.cast.replace(/\//g, '<br>    ')}</td></tr>
                                 </tbody></table></td>
                                 <td id="plotcell"><table class="content" cellspacing="0"><tbody>
-                                    <tr><th>简介</th></tr><tr><td>${data.summary == "" ? '本片暂无简介' : '　　' + data.summary.replace(/ 　　/g, '<br>　　')}</td></tr>
+                                    <tr><th>简介</th></tr><tr><td>${data.summary == "" ? '本片暂无简介' : data.summary.replace(/ 　　/g, '<br>　　')}</td></tr>
                                 </tbody></table></td>
                             </tr>
                             <tr>
@@ -83,7 +83,7 @@ export default () => {
                 hdbtitle.prepend(`<a  target='_blank' href="https://movie.douban.com/subject/${data.id}">[${data.title.split(' ')[0]}] </a>`);
 
                 $("#plotcell")[0].innerHTML = `<table class="content" cellspacing="0"><tbody>
-                <tr><th>简介</th></tr><tr><td>${data.summary == "" ? '本片暂无简介' : '　　' + data.summary.replace(/ 　　/g, '<br>　　')}</td></tr>
+                <tr><th>简介</th></tr><tr><td>${data.summary == "" ? '本片暂无简介' : data.summary.replace(/ 　　/g, '<br>　　')}</td></tr>
             </tbody></table>`
             }
             var links = $('table.contentlayout').find('a[href^="https://www.imdb.com/title/"]');
