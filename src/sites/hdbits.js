@@ -75,4 +75,32 @@ export default () => {
         } catch(err){ console.log(err) }
     }
 
+    if (site_url.match(/^https?:\/\/hdbits.org\/film\/info\?id=.*/)){
+        try{
+
+            const addInfoToPage = (data) => {
+                const hdbtitle = $('table.contentlayout').find('a[href^="https://www.imdb.com/title/"]');
+                hdbtitle.prepend(`<a  target='_blank' href="https://movie.douban.com/subject/${data.id}">[${data.title.split(' ')[0]}] </a>`);
+
+                $("#plotcell")[0].innerHTML = `<table class="content" cellspacing="0"><tbody>
+                <tr><th>简介</th></tr><tr><td>${data.summary == "" ? '本片暂无简介' : '　　' + data.summary.replace(/ 　　/g, '<br>　　')}</td></tr>
+            </tbody></table>`
+            }
+            var links = $('table.contentlayout').find('a[href^="https://www.imdb.com/title/"]');
+            if (links.length == 0) {
+                links = $('.showlinks').find('a[href^="https://www.imdb.com/title/"]');
+                if (links.length == 0) {
+                    return;
+                }
+            }
+            getDoubanInfo(links[0].href, function (detail) {
+                if (detail) {
+                    addInfoToPage(detail);
+                } else {
+                    return;
+                }
+            });
+        } catch(err){ console.log(err) }
+    }
+
 }
