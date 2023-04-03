@@ -12,6 +12,8 @@ exports.userScriptComment = `// ==UserScript==
 // @match        *://beyond-hd.me/library/title/*
 // @match        *://passthepopcorn.me/torrents*
 // @match        *://passthepopcorn.me/torrents.php?id*
+// @match        *://hdbits.org/details.php?id=*
+// @require      https://code.jquery.com/jquery-1.12.4.js
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue

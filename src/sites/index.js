@@ -1,6 +1,7 @@
 
 import bhdinit from './beyondhd'
 import ptpinit from './passthepopcorn'
+import hdbinit from './hdbits'
 
 
 let siteinit = () => {
@@ -10,6 +11,8 @@ let siteinit = () => {
         bhdinit()
     } else if (host === 'passthepopcorn.me') {
         ptpinit()
+    } else if (host === 'hdbits.org') {
+        hdbinit()
     }
 }
 
