@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.1
+// @version      0.7.2
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -77,19 +77,11 @@
       }
     });
   };
-  var getJSON_GM = (url, callback) => {
-    getURL_GM(url, function(data) {
-      if (data) {
-        callback(JSON.parse(data));
-      } else {
-        callback(null);
-      }
-    });
-  };
 
   // src/douban.js
   function parseDoubanDetail(html) {
     var raw_data = {};
+    raw_data.title = $("title", html).text().replace("(\u8C46\u74E3)", "").trim();
     try {
       raw_data.image = $("#mainpic img", html)[0].src.replace(
         /^.+(p\d+).+$/,
@@ -165,26 +157,30 @@
     return raw_data;
   }
   var getDoubanInfo = (imdbLink, callback) => {
-    let imdbId = imdbLink.match(/tt\d+/);
+    let imdbId = imdbLink.match(/tt\d+/)[0];
     let data = GM_getValue("douban-" + imdbId);
     if (data) {
       console.log("[TMI]\u5DF2\u7ECF\u5B58\u50A8\u6B64\u8C46\u74E3\u8BCD\u6761");
       callback(data);
     } else {
       console.log("[TMI]\u67E5\u8BE2\u8C46\u74E3\u8BCD\u6761...");
-      getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${imdbId}`, function(search) {
-        if (search && search.length > 0 && search[0].id) {
-          data = {
-            id: search[0].id,
-            url: `https://movie.douban.com/subject/${search[0].id}/`,
-            title: search[0].title
+      var search_url = "https://m.douban.com/search/?query=" + imdbId + "&type=movie";
+      getURL_GM(search_url, function(doc) {
+        if ($("ul.search_results_subjects", doc).length) {
+          var douban_id = $("ul.search_results_subjects", doc).find("a").attr("href").match(/subject\/(\d+)/)[1];
+          var douban_url = "https://movie.douban.com/subject/" + douban_id;
+          if (douban_url.search("35580200") > -1) {
+            return;
+          }
+          let data2 = {
+            id: douban_id,
+            url: douban_url
           };
-          getURL_GM(data.url, function(html) {
+          getURL_GM(douban_url, function(html) {
             if (html) {
               let details = parseDoubanDetail(html);
-              details.id = data.id;
-              details.url = data.url;
-              details.title = data.title;
+              details.id = data2.id;
+              details.url = data2.url;
               setValue_GM("douban-" + imdbId, details);
               callback(details);
             }
