@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.2
+// @version      0.7.3
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -81,7 +81,7 @@
   // src/douban.js
   function parseDoubanDetail(html) {
     var raw_data = {};
-    raw_data.title = $("title", html).text().replace("(\u8C46\u74E3)", "").trim();
+    raw_data.title = $(html).filter("title").text().replace("(\u8C46\u74E3)", "").trim();
     try {
       raw_data.image = $("#mainpic img", html)[0].src.replace(
         /^.+(p\d+).+$/,
@@ -208,7 +208,6 @@
           let details = parseDoubanDetail(document);
           details.id = subject_url[0].match(/\d+/);
           details.url = subject_url[0];
-          details.title = document.title.replace("(\u8C46\u74E3)", "").trim();
           setValue_GM("douban-" + imdbId, details);
         }
       } catch (error) {
