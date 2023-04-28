@@ -18,17 +18,6 @@ const getURL_GM = (url, callback) => {
     });
 }
 
-const getJSON_GM = (url, callback) => {
-    getURL_GM(url, function (data) {
-        if (data) {
-            callback(JSON.parse(data));
-        } else {
-            callback(null)
-        }
-    });
-}
-
 export {
-    getURL_GM,
-    getJSON_GM,
+    getURL_GM
 }

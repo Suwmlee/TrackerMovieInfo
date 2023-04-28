@@ -1,13 +1,12 @@
 import { setValue_GM } from './common';
-import {
-    getURL_GM, getJSON_GM
-} from './request';
+import { getURL_GM } from './request';
 
 /**
  * 解析页面数据(不包含 id/title/url )
  */
 function parseDoubanDetail(html) {
     var raw_data = {};
+    raw_data.title = $("title", html).text().replace("(豆瓣)", "").trim();
     try {
         raw_data.image = $('#mainpic img', html)[0].src.replace(
             /^.+(p\d+).+$/,
@@ -41,26 +40,30 @@ function parseDoubanDetail(html) {
 }
 
 const getDoubanInfo = (imdbLink, callback) => {
-    let imdbId = imdbLink.match(/tt\d+/);
+    let imdbId = imdbLink.match(/tt\d+/)[0];
     let data = GM_getValue("douban-" + imdbId)
     if (data) {
         console.log("[TMI]已经存储此豆瓣词条")
         callback(data);
     } else {
         console.log("[TMI]查询豆瓣词条...")
-        getJSON_GM(`https://movie.douban.com/j/subject_suggest?q=${imdbId}`, function (search) {
-            if (search && search.length > 0 && search[0].id) {
-                data = {
-                    id: search[0].id,
-                    url: `https://movie.douban.com/subject/${search[0].id}/`,
-                    title: search[0].title,
-                };
-                getURL_GM(data.url, function (html) {
+        var search_url = 'https://m.douban.com/search/?query=' + imdbId + '&type=movie'
+        getURL_GM(search_url, function (doc) {
+            if ($('ul.search_results_subjects', doc).length) {
+                var douban_id = $('ul.search_results_subjects', doc).find('a').attr('href').match(/subject\/(\d+)/)[1]
+                var douban_url = 'https://movie.douban.com/subject/' + douban_id
+                if (douban_url.search('35580200') > -1) {
+                    return;
+                }
+                let data = {
+                    id: douban_id,
+                    url: douban_url,
+                }
+                getURL_GM(douban_url, function (html) {
                     if (html) {
                         let details = parseDoubanDetail(html);
                         details.id = data.id;
                         details.url = data.url;
-                        details.title = data.title;
                         setValue_GM("douban-" + imdbId, details);
                         callback(details);
                     }
