@@ -5,6 +5,6 @@ import siteinit from './sites';
 (() => {
     doubaninit();
     siteinit();
-    // 缓存5天
-    clearExpired(5);
+    // 缓存90天
+    clearExpired(90);
 })();

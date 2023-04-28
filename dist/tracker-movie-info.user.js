@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.3
+// @version      0.7.4
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -649,6 +649,6 @@
   (() => {
     doubaninit();
     sites_default();
-    clearExpired(5);
+    clearExpired(90);
   })();
 })();
