@@ -39,6 +39,19 @@ function parseDoubanDetail(html) {
     return raw_data;
 }
 
+const queryDoubanIDByImdbID = (imdbId, callback) => {
+    console.log("[TMI]使用imdb id查询豆瓣id...")
+    var search_url = 'https://m.douban.com/search/?query=' + imdbId + '&type=movie'
+    getURL_GM(search_url, function (doc) {
+        if ($('ul.search_results_subjects', doc).length) {
+            var douban_id = $('ul.search_results_subjects', doc).find('a').attr('href').match(/subject\/(\d+)/)[1];
+            callback(douban_id)
+        }else{
+            callback();
+        }
+    })
+}
+
 const getDoubanInfo = (imdbLink, callback) => {
     let imdbId = imdbLink.match(/tt\d+/)[0];
     let data = GM_getValue("douban-" + imdbId)
@@ -47,29 +60,24 @@ const getDoubanInfo = (imdbLink, callback) => {
         callback(data);
     } else {
         console.log("[TMI]查询豆瓣词条...")
-        var search_url = 'https://m.douban.com/search/?query=' + imdbId + '&type=movie'
-        getURL_GM(search_url, function (doc) {
-            if ($('ul.search_results_subjects', doc).length) {
-                var douban_id = $('ul.search_results_subjects', doc).find('a').attr('href').match(/subject\/(\d+)/)[1]
-                var douban_url = 'https://movie.douban.com/subject/' + douban_id
-                if (douban_url.search('35580200') > -1) {
-                    return;
-                }
-                let data = {
-                    id: douban_id,
-                    url: douban_url,
-                }
-                getURL_GM(douban_url, function (html) {
-                    if (html) {
-                        let details = parseDoubanDetail(html);
-                        details.id = data.id;
-                        details.url = data.url;
-                        setValue_GM("douban-" + imdbId, details);
-                        callback(details);
-                    }
-                });
+        queryDoubanIDByImdbID(imdbId, function (douban_id) {
+            var douban_url = 'https://movie.douban.com/subject/' + douban_id
+
+            let data = {
+                id: douban_id,
+                url: douban_url,
             }
-        });
+            getURL_GM(douban_url, function (html) {
+                if (html) {
+                    let details = parseDoubanDetail(html);
+                    details.id = data.id;
+                    details.url = data.url;
+                    setValue_GM("douban-" + imdbId, details);
+                    callback(details);
+                }
+            });
+
+        })
     }
 }
 
@@ -101,6 +109,7 @@ const doubaninit = () => {
 }
 
 export {
+    queryDoubanIDByImdbID,
     getDoubanInfo,
     doubaninit,
 }

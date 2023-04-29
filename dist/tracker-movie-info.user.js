@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.5
+// @version      0.7.6
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -157,6 +157,18 @@
     }
     return raw_data;
   }
+  var queryDoubanIDByImdbID = (imdbId, callback) => {
+    console.log("[TMI]\u4F7F\u7528imdb id\u67E5\u8BE2\u8C46\u74E3id...");
+    var search_url = "https://m.douban.com/search/?query=" + imdbId + "&type=movie";
+    getURL_GM(search_url, function(doc) {
+      if ($("ul.search_results_subjects", doc).length) {
+        var douban_id = $("ul.search_results_subjects", doc).find("a").attr("href").match(/subject\/(\d+)/)[1];
+        callback(douban_id);
+      } else {
+        callback();
+      }
+    });
+  };
   var getDoubanInfo = (imdbLink, callback) => {
     let imdbId = imdbLink.match(/tt\d+/)[0];
     let data = GM_getValue("douban-" + imdbId);
@@ -165,28 +177,21 @@
       callback(data);
     } else {
       console.log("[TMI]\u67E5\u8BE2\u8C46\u74E3\u8BCD\u6761...");
-      var search_url = "https://m.douban.com/search/?query=" + imdbId + "&type=movie";
-      getURL_GM(search_url, function(doc) {
-        if ($("ul.search_results_subjects", doc).length) {
-          var douban_id = $("ul.search_results_subjects", doc).find("a").attr("href").match(/subject\/(\d+)/)[1];
-          var douban_url = "https://movie.douban.com/subject/" + douban_id;
-          if (douban_url.search("35580200") > -1) {
-            return;
+      queryDoubanIDByImdbID(imdbId, function(douban_id) {
+        var douban_url = "https://movie.douban.com/subject/" + douban_id;
+        let data2 = {
+          id: douban_id,
+          url: douban_url
+        };
+        getURL_GM(douban_url, function(html) {
+          if (html) {
+            let details = parseDoubanDetail(html);
+            details.id = data2.id;
+            details.url = data2.url;
+            setValue_GM("douban-" + imdbId, details);
+            callback(details);
           }
-          let data2 = {
-            id: douban_id,
-            url: douban_url
-          };
-          getURL_GM(douban_url, function(html) {
-            if (html) {
-              let details = parseDoubanDetail(html);
-              details.id = data2.id;
-              details.url = data2.url;
-              setValue_GM("douban-" + imdbId, details);
-              callback(details);
-            }
-          });
-        }
+        });
       });
     }
   };
@@ -304,6 +309,9 @@
       }, setDoubanLink = function(imdb_id, target) {
         if (!isEmpty(imdb_id)) {
           try {
+            if (!imdb_id.startsWith("tt")) {
+              imdb_id = "tt" + imdb_id;
+            }
             var td = target.parentNode.parentNode.getElementsByTagName("td")[1];
             var div = td.getElementsByClassName("basic-movie-list__movie__ratings-and-tags")[0];
             var new_div = document.createElement("div");
@@ -320,18 +328,13 @@
             div.insertBefore(new_div, div.firstElementChild);
             a.onclick = function(e) {
               e.preventDefault();
-              var req = `https://movie.douban.com/j/subject_suggest?q=tt${imdb_id}`;
-              GM_xmlhttpRequest({
-                method: "GET",
-                url: req,
-                onload: function(res) {
-                  var response = JSON.parse(res.responseText);
-                  if (response && response.length > 0 && response[0].id) {
-                    a.href = `https://movie.douban.com/subject/${response[0].id}/`;
-                    window.open(a.href, target = "_blank");
-                  } else {
-                    alert("\u65E0\u5339\u914D\u8C46\u74E3\u8BCD\u6761,\u53EF\u80FD\u672A\u6DFB\u52A0\u6216\u5DF2\u88AB\u5C4F\u853D...");
-                  }
+              queryDoubanIDByImdbID(imdb_id, function(douban_id) {
+                if (douban_id) {
+                  console.log(douban_id);
+                  a.href = `https://movie.douban.com/subject/${douban_id}/`;
+                  window.open(a.href, target = "_blank");
+                } else {
+                  alert("\u65E0\u5339\u914D\u8C46\u74E3\u8BCD\u6761,\u53EF\u80FD\u672A\u6DFB\u52A0\u6216\u5DF2\u88AB\u5C4F\u853D...");
                 }
               });
             };

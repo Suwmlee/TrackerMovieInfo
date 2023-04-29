@@ -1,4 +1,4 @@
-import { getDoubanInfo } from "../douban";
+import { getDoubanInfo, queryDoubanIDByImdbID } from "../douban";
 
 export default () => {
     var site_url = decodeURI(location.href);
@@ -65,6 +65,9 @@ export default () => {
         function setDoubanLink(imdb_id, target) {
             if (!isEmpty(imdb_id)) {
                 try {
+                    if (!imdb_id.startsWith("tt")) {
+                        imdb_id = "tt" + imdb_id;
+                    }
                     var td = target.parentNode.parentNode.getElementsByTagName('td')[1];
                     var div = td.getElementsByClassName('basic-movie-list__movie__ratings-and-tags')[0];
                     var new_div = document.createElement('div');
@@ -81,20 +84,15 @@ export default () => {
                     div.insertBefore(new_div, div.firstElementChild);
                     a.onclick = function (e) {
                         e.preventDefault();
-                        var req = `https://movie.douban.com/j/subject_suggest?q=tt${imdb_id}`;
-                        GM_xmlhttpRequest({
-                            method: 'GET',
-                            url: req,
-                            onload: function (res) {
-                                var response = JSON.parse(res.responseText);
-                                if (response && response.length > 0 && response[0].id) {
-                                    a.href = `https://movie.douban.com/subject/${response[0].id}/`;
-                                    window.open(a.href, target = "_blank")
-                                } else {
-                                    alert("无匹配豆瓣词条,可能未添加或已被屏蔽...")
-                                }
+                        queryDoubanIDByImdbID(imdb_id, function (douban_id) {
+                            if (douban_id) {
+                                console.log(douban_id)
+                                a.href = `https://movie.douban.com/subject/${douban_id}/`;
+                                window.open(a.href, target = "_blank")
+                            } else {
+                                alert("无匹配豆瓣词条,可能未添加或已被屏蔽...")
                             }
-                        });
+                        })
                     }
                 } catch (err) { }
             }
