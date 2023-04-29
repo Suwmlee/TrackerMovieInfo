@@ -214,6 +214,7 @@
           let details = parseDoubanDetail(document);
           details.id = subject_url[0].match(/\d+/);
           details.url = subject_url[0];
+          details.title = document.title.replace("(\u8C46\u74E3)", "").trim();
           setValue_GM("douban-" + imdbId, details);
         }
       } catch (error) {
