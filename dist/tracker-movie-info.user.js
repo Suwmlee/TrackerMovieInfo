@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.4
+// @version      0.7.5
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -9,6 +9,7 @@
 // @match        *://beyond-hd.me/library/title/*
 // @match        *://passthepopcorn.me/torrents*
 // @match        *://passthepopcorn.me/torrents.php?id*
+// @match        *://hdbits.org/browse.php*
 // @match        *://hdbits.org/film/info?id=*
 // @match        *://hdbits.org/details.php?id=*
 // @require      https://code.jquery.com/jquery-1.12.4.js
@@ -625,6 +626,17 @@
           } else {
             return;
           }
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    if (site_url.match(/^https?:\/\/hdbits.org\/browse.php/)) {
+      try {
+        $("#torrent-list>thead>tr>th:first-child").after('<th colspan="1" class="center" style="width:45px">Poster</th>');
+        $("#torrent-list>tbody>tr").each(function() {
+          var imagesrc = $(this).find("td>div>img").attr("src");
+          $(this).find("td:eq(2)").before(`<td class="center catcell"><img style="height:45px" src=${imagesrc} alt></td>`);
         });
       } catch (err) {
         console.log(err);

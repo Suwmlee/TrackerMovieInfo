@@ -103,4 +103,14 @@ export default () => {
         } catch(err){ console.log(err) }
     }
 
+    if (site_url.match(/^https?:\/\/hdbits.org\/browse.php/)){
+        try{
+            $("#torrent-list>thead>tr>th:first-child").after('<th colspan="1" class="center" style="width:45px">Poster</th>');
+            $("#torrent-list>tbody>tr").each(function() {
+              var imagesrc = $(this).find("td>div>img").attr("src");
+              $(this).find("td:eq(2)").before(`<td class="center catcell"><img style="height:45px" src=${imagesrc} alt></td>`);
+            });
+        } catch(err){ console.log(err) }
+    }
+
 }
