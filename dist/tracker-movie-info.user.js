@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.6
+// @version      0.7.7
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -414,33 +414,6 @@
           setGroupName(groupname, this);
         });
       }
-      $(".torrent-info__reported").each(function() {
-        $(this).css("color", "#FFAD86");
-      });
-      $(".torrent-info__download-modifier--free").each(function() {
-        $(this).parent().css("color", "#4DFFFF");
-      });
-      $(".golden-popcorn-character").each(function() {
-        var val = $(this).next().attr("class");
-        if (val && !val.match(/torrent-info-link--user-leeching|torrent-info-link--user-seeding|torrent-info-link--user-downloaded/i)) {
-          $(this).parent().css("color", "#FFD700");
-          $(this).next().css("color", "#FFD700");
-        } else {
-          $(this).attr("class", val);
-        }
-      });
-      $(".torrent-info__trumpable").each(function() {
-        $(this).css("color", "#E8FFC4");
-      });
-      $(".torrent-info-link--user-seeding").each(function() {
-        $(this).css("color", "red");
-      });
-      $(".torrent-info-link--user-downloaded").each(function() {
-        $(this).css("color", "green");
-      });
-      $(".torrent-info-link--user-leeching").each(function() {
-        $(this).css("color", "MediumSpringGreen");
-      });
       if (location.href.match(/id=\d+/)) {
         $(".group_torrent_header").each(function() {
           var $img = $(this).find("a").eq(3).find("img");
