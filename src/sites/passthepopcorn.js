@@ -29,7 +29,7 @@ export default () => {
                 color = false;
             }
             if ($(target).parent().find('.torrent-info__download-modifier--free').length) {
-                color = false;
+                color = true;
             }
             if ($(target).parent().find('.torrent-info-link--user-leeching').length) {
                 color = false;
