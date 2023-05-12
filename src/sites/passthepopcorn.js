@@ -166,7 +166,9 @@ export default () => {
                 setGroupName(groupname, this);
             });
         }
-
+        $('.torrent-info__download-modifier--free').each(function () {
+            $(this).css('color', '#039AFF');
+        });
         if (location.href.match(/id=\d+/)) {
             $('.group_torrent_header').each(function () {
                 var $img = $(this).find('a').eq(3).find('img');
