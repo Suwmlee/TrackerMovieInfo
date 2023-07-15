@@ -16,19 +16,22 @@ export default () => {
 
                 var label = '- ';
                 var status = 'block';
+                var image_snippet = '';
                 var douban_collapse = false;
                 if (douban_collapse) {
                     label = '+ ';
                     status = 'none';
                 }
-
+                try {
+                    image_snippet = $("table.contentlayout").find('a[href^="/film/info?id"]')[0].outerHTML; 
+                } catch (e) { image_snippet = '' }
                 $('#details > tbody > tr').eq(1).after(`
                     <tr><td>
                     <div id="l20201117" class="label collapsable" onclick="showHideEl(20201117)"><span class="plusminus">${label}</span>关于本片 (豆瓣信息)</div>
                     <div id="c20201117" class="hideablecontent" style="display: ${status};">
                         <table class="contentlayout" cellspacing="0"><tbody>
                             <tr>
-                                <td rowspan="3" width="2"><img src="${data.image}" style="max-width:250px;border:0px;" alt></td>
+                                <td rowspan="3" width="2">${image_snippet}</td>
                                 <td colspan="2"><h1><a href="https://movie.douban.com/subject/${data.id}" target="_blank">${data.title}</a> (${data.year})</h1><h3>${data.aka}</h3></td>
                             </tr>
                             <tr>
