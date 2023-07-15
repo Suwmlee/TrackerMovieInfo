@@ -532,7 +532,9 @@
             status = "none";
           }
           try {
-            image_snippet = $("table.contentlayout").find('a[href^="/film/info?id"]')[0].outerHTML;
+            var a_element = $("table.contentlayout").find('a[href^="/film/info?id"]')[0];
+            a_element.firstChild.setAttribute("style", "max-height: 660px; width: 250px;");
+            image_snippet = a_element.outerHTML;
           } catch (e) {
             image_snippet = "";
           }
