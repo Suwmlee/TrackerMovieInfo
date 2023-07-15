@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.8
+// @version      0.7.9
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -525,10 +525,16 @@
           }
           var label = "- ";
           var status = "block";
+          var image_snippet = "";
           var douban_collapse = false;
           if (douban_collapse) {
             label = "+ ";
             status = "none";
+          }
+          try {
+            image_snippet = $("table.contentlayout").find('a[href^="/film/info?id"]')[0].outerHTML;
+          } catch (e) {
+            image_snippet = "";
           }
           $("#details > tbody > tr").eq(1).after(`
                     <tr><td>
@@ -536,7 +542,7 @@
                     <div id="c20201117" class="hideablecontent" style="display: ${status};">
                         <table class="contentlayout" cellspacing="0"><tbody>
                             <tr>
-                                <td rowspan="3" width="2"><img src="${data.image}" style="max-width:250px;border:0px;" alt></td>
+                                <td rowspan="3" width="2">${image_snippet}</td>
                                 <td colspan="2"><h1><a href="https://movie.douban.com/subject/${data.id}" target="_blank">${data.title}</a> (${data.year})</h1><h3>${data.aka}</h3></td>
                             </tr>
                             <tr>
