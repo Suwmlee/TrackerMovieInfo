@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.10
+// @version      0.7.11
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -21,6 +21,7 @@
 // @connect      api.douban.com
 // @connect      movie.douban.com
 // @connect      m.douban.com
+// @run-at       document-end
 // ==/UserScript==
 (() => {
   // src/common.js

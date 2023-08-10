@@ -24,4 +24,5 @@ exports.userScriptComment = `// ==UserScript==
 // @connect      api.douban.com
 // @connect      movie.douban.com
 // @connect      m.douban.com
+// @run-at       document-end
 // ==/UserScript==`;
