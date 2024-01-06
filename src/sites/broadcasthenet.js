@@ -42,12 +42,13 @@ export default () => {
     }
 
     var links = $('ul[class="stats nobullet"]').find('a[href^="https://www.imdb.com/title/"]');
-    console.log(links)
-    getDoubanInfo(links[0].href, function (detail) {
-        if (detail) {
-            addInfoToPage(detail);
-        } else {
-            return;
-        }
-    });
+    if (links.length > 0) {
+        getDoubanInfo(links[0].href, function (detail) {
+            if (detail) {
+                addInfoToPage(detail);
+            } else {
+                return;
+            }
+        });
+    }
 }
