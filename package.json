@@ -1,6 +1,6 @@
 {
   "name": "trackermovieinfo",
-  "version": "0.7.11",
+  "version": "0.8.0",
   "description": "增强PT站显示更多影片信息",
   "author": "suwmlee",
   "main": "index.js",

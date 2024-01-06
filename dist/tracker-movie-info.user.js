@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.7.11
+// @version      0.8.0
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -9,6 +9,7 @@
 // @match        *://beyond-hd.me/library/title/*
 // @match        *://passthepopcorn.me/torrents*
 // @match        *://passthepopcorn.me/torrents.php?id*
+// @match        *://broadcasthe.net/series.php?id=*
 // @match        *://hdbits.org/browse.php*
 // @match        *://hdbits.org/film/info?id=*
 // @match        *://hdbits.org/details.php?id=*
@@ -512,6 +513,53 @@
     }
   };
 
+  // src/sites/broadcasthenet.js
+  var broadcasthenet_default = () => {
+    if (location.href == "https://broadcasthe.net/friends.php" || location.href == "https://backup.landof.tv/friends.php") {
+      $(".main_column").find('td:contains("Last seen")').css({ "width": "150px" });
+      return;
+    }
+    const addInfoToPage = (data) => {
+      if (data.cast.split("/").length > 8) {
+        data.cast = data.cast.split("/").slice(0, 8).join("/");
+      }
+      if (data.director.split("/").length > 8) {
+        data.director = data.director.split("/").slice(0, 8).join("/");
+      }
+      $("div.thin > center").after(`
+            <div id="doubaninfo" style="margin-right: 5px;margin-top: 10px;">
+                <table cellspacing="0"><tbody>
+                    <tr>
+                        <td colspan="2"><h1 style="text-align: center;">
+                        <a href="https://movie.douban.com/subject/${data.id}" target="_blank">${data.title}</a> (${data.year})</h1><h3>${data.aka}</h3></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0;"><table cellspacing="0" style="white-space: nowrap;"><tbody>
+                            <tr><th>\u8BC4\u5206</th><td>${data.average} (${data.votes}\u4EBA\u8BC4\u4EF7)</td></tr>
+                            <tr><th>\u7C7B\u578B</th><td>${data.genre}</td></tr>
+                            <tr><th>\u56FD\u5BB6/\u5730\u533A</th><td>${data.region}</td></tr>
+                            <tr><th>\u5BFC\u6F14</th><td>${data.director}</td></tr>
+                            <tr><th>\u8BED\u8A00</th><td>${data.language}</td></tr>
+                            <tr><th>\u4E0A\u6620\u65E5\u671F</th><td>${data.releaseDate}</td></tr>
+                            <tr><th>\u6F14\u5458</th><td style="white-space: normal;">${data.cast}</td></tr>
+                        </tbody></table></td>
+                        <td id="plotcell" style="padding: 10px;vertical-align: top;">${data.summary == "" ? "\u672C\u7247\u6682\u65E0\u7B80\u4ECB" : data.summary.replace(/ 　　/g, "<br>\u3000\u3000")}</td>
+                    </tr>
+                </tbody></table>
+            </div>
+        `);
+    };
+    var links = $('ul[class="stats nobullet"]').find('a[href^="https://www.imdb.com/title/"]');
+    console.log(links);
+    getDoubanInfo(links[0].href, function(detail) {
+      if (detail) {
+        addInfoToPage(detail);
+      } else {
+        return;
+      }
+    });
+  };
+
   // src/sites/hdbits.js
   var hdbits_default = () => {
     var site_url = decodeURI(location.href);
@@ -640,6 +688,8 @@
       beyondhd_default();
     } else if (host === "passthepopcorn.me") {
       passthepopcorn_default();
+    } else if (host === "broadcasthe.net") {
+      broadcasthenet_default();
     } else if (host === "hdbits.org") {
       hdbits_default();
     }
