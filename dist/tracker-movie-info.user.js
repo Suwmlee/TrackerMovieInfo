@@ -534,7 +534,7 @@
                         <a href="https://movie.douban.com/subject/${data.id}" target="_blank">${data.title}</a> (${data.year})</h1><h3>${data.aka}</h3></td>
                     </tr>
                     <tr>
-                        <td style="padding: 0;"><table cellspacing="0" style="white-space: nowrap;"><tbody>
+                        <td style="padding: 0;width: 33%;"><table cellspacing="0" style="white-space: nowrap;"><tbody>
                             <tr><th>\u8BC4\u5206</th><td>${data.average} (${data.votes}\u4EBA\u8BC4\u4EF7)</td></tr>
                             <tr><th>\u7C7B\u578B</th><td>${data.genre}</td></tr>
                             <tr><th>\u56FD\u5BB6/\u5730\u533A</th><td>${data.region}</td></tr>

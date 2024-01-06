@@ -25,7 +25,7 @@ export default () => {
                         <a href="https://movie.douban.com/subject/${data.id}" target="_blank">${data.title}</a> (${data.year})</h1><h3>${data.aka}</h3></td>
                     </tr>
                     <tr>
-                        <td style="padding: 0;"><table cellspacing="0" style="white-space: nowrap;"><tbody>
+                        <td style="padding: 0;width: 33%;"><table cellspacing="0" style="white-space: nowrap;"><tbody>
                             <tr><th>评分</th><td>${data.average} (${data.votes}人评价)</td></tr>
                             <tr><th>类型</th><td>${data.genre}</td></tr>
                             <tr><th>国家/地区</th><td>${data.region}</td></tr>
