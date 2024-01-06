@@ -538,7 +538,7 @@
                             <tr><th>\u8BC4\u5206</th><td>${data.average} (${data.votes}\u4EBA\u8BC4\u4EF7)</td></tr>
                             <tr><th>\u7C7B\u578B</th><td>${data.genre}</td></tr>
                             <tr><th>\u56FD\u5BB6/\u5730\u533A</th><td>${data.region}</td></tr>
-                            <tr><th>\u5BFC\u6F14</th><td>${data.director}</td></tr>
+                            <tr><th>\u5BFC\u6F14</th><td style="white-space: normal;">${data.director}</td></tr>
                             <tr><th>\u8BED\u8A00</th><td>${data.language}</td></tr>
                             <tr><th>\u4E0A\u6620\u65E5\u671F</th><td>${data.releaseDate}</td></tr>
                             <tr><th>\u6F14\u5458</th><td style="white-space: normal;">${data.cast}</td></tr>

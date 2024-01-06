@@ -29,7 +29,7 @@ export default () => {
                             <tr><th>评分</th><td>${data.average} (${data.votes}人评价)</td></tr>
                             <tr><th>类型</th><td>${data.genre}</td></tr>
                             <tr><th>国家/地区</th><td>${data.region}</td></tr>
-                            <tr><th>导演</th><td>${data.director}</td></tr>
+                            <tr><th>导演</th><td style="white-space: normal;">${data.director}</td></tr>
                             <tr><th>语言</th><td>${data.language}</td></tr>
                             <tr><th>上映日期</th><td>${data.releaseDate}</td></tr>
                             <tr><th>演员</th><td style="white-space: normal;">${data.cast}</td></tr>
