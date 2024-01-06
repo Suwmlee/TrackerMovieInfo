@@ -12,6 +12,7 @@ exports.userScriptComment = `// ==UserScript==
 // @match        *://beyond-hd.me/library/title/*
 // @match        *://passthepopcorn.me/torrents*
 // @match        *://passthepopcorn.me/torrents.php?id*
+// @match        *://broadcasthe.net/series.php?id=*
 // @match        *://hdbits.org/browse.php*
 // @match        *://hdbits.org/film/info?id=*
 // @match        *://hdbits.org/details.php?id=*
