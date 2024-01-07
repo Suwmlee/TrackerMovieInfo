@@ -41,7 +41,7 @@ export default () => {
         `);
     }
 
-    var links = $('ul[class="stats nobullet"]').find('a[href^="https://www.imdb.com/title/"]');
+    var links = $('ul[class="stats nobullet"]').find('a[href*="imdb.com/title/"]');
     if (links.length > 0) {
         getDoubanInfo(links[0].href, function (detail) {
             if (detail) {

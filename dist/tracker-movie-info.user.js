@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TrackerMovieInfo
 // @namespace    https://github.com/Suwmlee/TrackerMovieInfo
-// @version      0.8.0
+// @version      0.8.1
 // @description  增强PT站显示更多影片信息
 // @author       suwmlee
 // @match        *://movie.douban.com/subject/*
@@ -549,7 +549,7 @@
             </div>
         `);
     };
-    var links = $('ul[class="stats nobullet"]').find('a[href^="https://www.imdb.com/title/"]');
+    var links = $('ul[class="stats nobullet"]').find('a[href*="imdb.com/title/"]');
     if (links.length > 0) {
       getDoubanInfo(links[0].href, function(detail) {
         if (detail) {
